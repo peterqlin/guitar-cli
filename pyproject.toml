@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "guitar-cli"
+version = "0.1.0"
+description = "CLI for visualizing guitar chords and more"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{ name = "Peter Lin", email = "peter.lin2305@gmail.com" }]
+requires-python = ">=3.9"
+dependencies = ["click>=8.0"]
