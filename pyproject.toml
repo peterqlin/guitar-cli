@@ -11,3 +11,21 @@ license = { file = "LICENSE" }
 authors = [{ name = "Peter Lin", email = "peter.lin2305@gmail.com" }]
 requires-python = ">=3.9"
 dependencies = ["click>=8.0"]
+
+[project.optional-dependencies]
+dev = ["black==25.1.0", "isort", "pytest", "pre-commit"]
+
+[tool.black]
+line-length = 88
+target-version = ["py39", "py310", "py311", "py312"]
+
+[tool.isort]
+profile = "black"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.coverage.run]
+branch = true
+source = ["guitar_cli"]
