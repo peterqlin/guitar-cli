@@ -1,5 +1,5 @@
 import click
-from .utils import Fretboard
+from .core import Fretboard
 
 
 @click.group()
