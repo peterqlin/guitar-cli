@@ -45,6 +45,7 @@ class Fretboard:
         init_pos = [
             chromatic_scale.index(n) for n in ["e", "b", "g", "d", "a", "e"]
         ]  # get initial note positions, high e to low e
+        # TODO: change this to adapt to > 12 frets
         self.fretboard = [
             chromatic_scale[pos:] + chromatic_scale[:pos] for pos in init_pos
         ]  # create fretboard with inc indices corresponding to lower pitch strings
@@ -68,10 +69,6 @@ class Fretboard:
 
     def set_chord(self, chord: list[int]) -> None:
         self.chord = chord
-
-    def set_fretboard_length(self, length: int) -> None:
-        if length > 150:
-            self.fretboard_length = length
 
 
 def get_fret_spacing(scale_length: float, fret_count: int) -> list[int]:
