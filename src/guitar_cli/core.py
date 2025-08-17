@@ -4,7 +4,7 @@ from .utils import get_fret_spacing
 
 class Fretboard:
     def __init__(
-        self, fretboard_length=200, fret_count=12, rgb_frets=True, twelve_string=False
+        self, fretboard_length=300, fret_count=12, rgb_frets=True, twelve_string=False
     ) -> None:
         self.console = Console()  # create console for rich printing
         self.rgb_frets = rgb_frets  # toggle colored frets
@@ -56,21 +56,28 @@ class Fretboard:
         Handle rendering the fretboard
         """
         try:
-            for frets in self.fretboard:
-                if self.rgb_frets:
-                    frets = [
-                        f"[rgb({self.color_map[fret][0]},{self.color_map[fret][1]},{self.color_map[fret][2]})]{fret:{self.fill_char}>{self.fret_spacing[i]}}[/]"
-                        for i, fret in enumerate(frets)
-                    ]
-                else:
-                    frets = [
-                        f"{fret:{self.fill_char}>{self.fret_spacing[i]}}"
-                        for i, fret in enumerate(frets)
-                    ]
-                frets[0] = frets[0].replace(
-                    "-", ""
-                )  # remove dashes to the left of open strings
-                self.console.print("".join(frets))
+            strung_fretboard = []
+            for notes in self.fretboard:
+                strung_notes = []
+                for i, note in enumerate(notes):
+                    strung_note = ""
+                    if i == 0:
+                        strung_note = note  # don't give open notes a left dash
+                    else:
+                        strung_note = f"{note:{self.fill_char}>{self.fret_spacing[i]}}"  # dash to left of fret representing note region
+                    if self.rgb_frets:
+                        r, g, b = self.color_map[note]
+                        strung_note = f"[rgb({r},{g},{b})]{strung_note}[/]"  # use color from color map
+                    else:
+                        strung_note = f"[rgb(240,240,240)]{strung_note}[/]"  # use white; equal sign has it's own coloring rules
+                    strung_notes.append(strung_note)
+                strung_fretboard.append(strung_notes)
+            rendered_fretboard = "\n".join(
+                ["".join(string) for string in strung_fretboard]
+            )
+
+            # self.console.log(rendered_fretboard, markup=False)
+            self.console.print(rendered_fretboard)
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
 
