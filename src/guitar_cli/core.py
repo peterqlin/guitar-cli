@@ -55,19 +55,27 @@ class Fretboard:
         """
         Handle rendering the fretboard
         """
-        for frets in self.fretboard:
-            if self.rgb_frets:
-                frets = [
-                    f"[rgb({self.color_map[f][0]},{self.color_map[f][1]},{self.color_map[f][2]})]{f:{self.fill_char}>{self.fret_spacing[i]}}[/]"
-                    for i, f in enumerate(frets)
-                ]
-            else:
-                frets = [
-                    f"{f:{self.fill_char}>{self.fret_spacing[i]}}"
-                    for i, f in enumerate(frets)
-                ]
-            frets[0] = frets[0].replace("-", "")
-            self.console.print("".join(frets))
+        try:
+            for frets in self.fretboard:
+                if self.rgb_frets:
+                    frets = [
+                        f"[rgb({self.color_map[fret][0]},{self.color_map[fret][1]},{self.color_map[fret][2]})]{fret:{self.fill_char}>{self.fret_spacing[i]}}[/]"
+                        for i, fret in enumerate(frets)
+                    ]
+                else:
+                    frets = [
+                        f"{fret:{self.fill_char}>{self.fret_spacing[i]}}"
+                        for i, fret in enumerate(frets)
+                    ]
+                frets[0] = frets[0].replace(
+                    "-", ""
+                )  # remove dashes to the left of open strings
+                self.console.print("".join(frets))
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
 
     def set_chord(self, chord: list[int]) -> None:
-        self.chord = chord
+        try:
+            self.chord = chord
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
