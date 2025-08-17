@@ -12,6 +12,9 @@ authors = [{ name = "Peter Lin", email = "peter.lin2305@gmail.com" }]
 requires-python = ">=3.9"
 dependencies = ["click>=8.0"]
 
+[project.scripts]
+gcli = "guitar_cli.cli:cli"
+
 [project.optional-dependencies]
 dev = ["black==25.1.0", "isort", "pytest", "pre-commit"]
 
