@@ -6,3 +6,6 @@ venv/
 
 # Local package metadata
 *.egg-info/
+
+# Build files
+build/

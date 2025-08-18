@@ -62,6 +62,9 @@ class Fretboard:
             print(f"Failed to load headstock ASCII art: {e}")
             self.headstock = []
 
+    def toggle_rgb_frets(self) -> None:
+        self.rgb_frets = not self.rgb_frets
+
     def show(self) -> None:
         """
         Handle rendering the fretboard
