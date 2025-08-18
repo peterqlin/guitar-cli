@@ -1,3 +1,8 @@
+def get_rgb_text(text: str, rgb_color: tuple = (240, 240, 240)) -> str:
+    r, g, b = rgb_color
+    return f"[rgb({r},{g},{b})]{text}[/]"
+
+
 def get_fret_spacing(scale_length: float, fret_count: int) -> list[int]:
     """
     Calculate the spacing between fret n and fret n+1 on a guitar.

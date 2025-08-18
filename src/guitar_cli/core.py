@@ -1,13 +1,11 @@
-import sys
-import time
 from rich.console import Console
-from .utils import get_fret_spacing
+from .utils import get_fret_spacing, get_rgb_text
 
 
 class Fretboard:
     def __init__(self, fretboard_length=200, fret_count=12, rgb_frets=True) -> None:
-        self.console = Console()  # create console for rich printing
-        self.rgb_frets = rgb_frets  # toggle colored frets
+        self.console = Console()
+        self.rgb_frets = rgb_frets
         self.fret_spacing = get_fret_spacing(fretboard_length, fret_count)
         self.color_map = {
             "e": (31, 119, 180),  # Blue
@@ -24,7 +22,7 @@ class Fretboard:
             "d#": (197, 176, 213),  # Lavender
         }
 
-        self.chord = [0] * 6  # initialize chord array
+        self.chord = [0] * 6
 
         # TODO: allow toggle between equivalent sharps and flats
         self.chromatic_scale = [
@@ -40,7 +38,7 @@ class Fretboard:
             "a",
             "a#",
             "b",
-        ]  # initialize chromatic scale
+        ]
 
         self.chord_names = [
             "A",
@@ -74,23 +72,24 @@ class Fretboard:
         ]
 
         # TODO: maybe change how this is stored, but for now it'll work
+        # get initial note positions, high e to low e
         init_pos = [
             self.chromatic_scale.index(n) for n in ["e", "b", "g", "d", "a", "e"]
-        ]  # get initial note positions, high e to low e
+        ]
         # TODO: change this to adapt to > 12 frets
+        # create fretboard with inc indices corresponding to lower pitch strings
         self.fretboard = [
             self.chromatic_scale[pos:] + self.chromatic_scale[:pos] for pos in init_pos
-        ]  # create fretboard with inc indices corresponding to lower pitch strings
+        ]
 
         try:
             with open(
                 "src/guitar_cli/headstock_ascii_art.txt", "r", encoding="utf-8"
             ) as f:
-                self.headstock = [
-                    "[rgb(240,240,240)]" + line.rstrip("\n") + "[/]" for line in f
-                ]  # use white; some special characters are colored by default
+                # set color of ascii art to white
+                self.headstock = [get_rgb_text(line.rstrip("\n")) for line in f]
         except Exception as e:
-            print(f"Failed to load headstock ASCII art: {e}")
+            self.console.log(f"Failed to load headstock ASCII art: {e}")
             self.headstock = []
 
     def toggle_rgb_frets(self) -> None:
@@ -101,38 +100,34 @@ class Fretboard:
         Handle rendering the fretboard
         """
         try:
-            self.console.clear()  # clear stdout
+            self.console.clear()
             strung_fretboard = []
             for string_idx, notes in enumerate(self.fretboard):
                 strung_notes = []
                 for note_idx, note in enumerate(notes):
-                    strung_note = f"{note:{'-' if string_idx < 3 else '='}<{self.fret_spacing[note_idx]}}"
-                    dash_string = strung_note[
+                    # need this for spacing
+                    string_segment = f"{note:{'-' if string_idx < 3 else '='}<{self.fret_spacing[note_idx]}}"[
                         len(note) :
-                    ]  # extract the string of hyphens
+                    ]
+                    styled_note = get_rgb_text(note)
+                    styled_string_segment = get_rgb_text(string_segment)
                     if self.rgb_frets:
-                        r, g, b = self.color_map[note]
-                        styled_note = (
-                            f"[rgb({r},{g},{b})]{note}[/]"  # use color from color map
-                        )
-                        r2, g2, b2 = self.color_map[
+                        # set string color such that string to the left of note is same color as note
+                        next_color = self.color_map[
                             self.chromatic_scale[
                                 (self.chromatic_scale.index(note) + 1)
                                 % len(self.chromatic_scale)
                             ]
                         ]
-                        styled_dash_string = f"[rgb({r2},{g2},{b2})]{dash_string}[/]"  # use color from color map
-                        strung_note = f"{styled_note}{styled_dash_string}"
-                    else:
-                        strung_note = f"[rgb(240,240,240)]{note}{dash_string}[/]"  # use white; equal sign has it's own coloring rules
-                    strung_notes.append(strung_note)
+                        styled_note = get_rgb_text(note, self.color_map[note])
+                        styled_string_segment = get_rgb_text(string_segment, next_color)
+                    strung_notes.append(styled_note + styled_string_segment)
                 strung_fretboard.append(strung_notes)
             headstock_copy = self.headstock.copy()
             # TODO: make this not so hard-coded
             start_idx = 0
-            headstock_copy[start_idx] += "".join(
-                ["_"] * sum(self.fret_spacing)
-            )  # extend the neck of the guitar as necessary
+            # extend the neck of the guitar
+            headstock_copy[start_idx] += "".join(["_"] * sum(self.fret_spacing))
             for i, string in zip(range(start_idx + 1, start_idx + 7), strung_fretboard):
                 headstock_copy[i] += "".join(string)
             rendered_fretboard = "\n".join(headstock_copy)
