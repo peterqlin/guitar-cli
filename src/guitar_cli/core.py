@@ -93,13 +93,14 @@ class Fretboard:
             ) as f:
                 # TODO: add underline to second-to-last row
                 # set color of ascii art to white
-                self.headstock = [
-                    get_rgb_text(line.rstrip("\n"), fg_color=(240, 240, 240))
-                    for line in f
-                ]
+                # self.headstock = [
+                #     get_rgb_text(line.rstrip("\n"), fg_color=(240, 240, 240))
+                #     for line in f
+                # ]
+                self.headstock = f.read()
         except Exception as e:
             self.console.log(f"Failed to load headstock ASCII art: {e}")
-            self.headstock = []
+            self.headstock = ""
 
     def toggle_rgb_frets(self) -> None:
         self.rgb_frets = not self.rgb_frets
@@ -113,12 +114,14 @@ class Fretboard:
             white_rgb = (240, 240, 240)
             black_rgb = (0, 0, 0)
             strung_fretboard = []
-            for string_idx, notes in enumerate(self.fretboard):
+            for notes in self.fretboard:
                 strung_notes = []
                 for note_idx, note in enumerate(notes):
                     display_note = note if self.labeled_frets else "|"
                     # need this for spacing
-                    note_and_string_segment = f"{display_note:{'-' if string_idx < 3 else '='}<{self.fret_spacing[note_idx]}}"
+                    note_and_string_segment = (
+                        f"{display_note: <{self.fret_spacing[note_idx]}}"
+                    )
                     string_segment = note_and_string_segment[len(display_note) :]
                     styled_note = get_rgb_text(
                         display_note, fg_color=black_rgb, bg_color=white_rgb
@@ -144,16 +147,14 @@ class Fretboard:
                         )
                     strung_notes.append(styled_note + styled_string_segment)
                 strung_fretboard.append(strung_notes)
-            headstock_copy = self.headstock.copy()
-            # TODO: make this not so hard-coded
-            start_idx = 1
-            # extend the neck of the guitar
-            for i, string in zip(range(start_idx, start_idx + 6), strung_fretboard):
-                headstock_copy[i] += "".join(string)
-            rendered_fretboard = "\n".join(headstock_copy)
 
-            # self.console.log(rendered_fretboard, markup=False)
-            self.console.print(rendered_fretboard)
+            rendered_fretboard = self.headstock
+            for i, string in enumerate(strung_fretboard):
+                rendered_fretboard = rendered_fretboard.replace(
+                    f"({i})", "".join(string)
+                )
+
+            self.console.print("\n" + rendered_fretboard + "\n")
         except Exception as e:
             self.console.log(f"An unexpected error occurred: {e}")
 
