@@ -10,13 +10,13 @@ readme = "README.md"
 license = { file = "LICENSE" }
 authors = [{ name = "Peter Lin", email = "peter.lin2305@gmail.com" }]
 requires-python = ">=3.9"
-dependencies = ["click>=8.0"]
+dependencies = ["click>=8.0", "readchar>=4.2.1", "rich>=14.1.0"]
 
 [project.scripts]
 gcli = "guitar_cli.cli:cli"
 
 [project.optional-dependencies]
-dev = ["black==25.1.0", "isort", "pytest", "pre-commit"]
+dev = ["black>=25.1.0", "pre-commit>=4.3.0"]
 
 [tool.black]
 line-length = 88
