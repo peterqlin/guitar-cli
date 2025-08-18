@@ -26,6 +26,7 @@ class Fretboard:
 
         self.chord = [0] * 6  # initialize chord array
 
+        # TODO: allow toggle between equivalent sharps and flats
         self.chromatic_scale = [
             "c",
             "c#",
@@ -55,8 +56,8 @@ class Fretboard:
                 "src/guitar_cli/headstock_ascii_art.txt", "r", encoding="utf-8"
             ) as f:
                 self.headstock = [
-                    "[rgb(240,240,240)] " + line.rstrip("\n") + " [/]" for line in f
-                ]  # "paint it white" and use space to ensure no accidental character escaping
+                    "[rgb(240,240,240)]" + line.rstrip("\n") + "[/]" for line in f
+                ]  # use white; some special characters are colored by default
         except Exception as e:
             print(f"Failed to load headstock ASCII art: {e}")
             self.headstock = []
@@ -93,10 +94,11 @@ class Fretboard:
                     strung_notes.append(strung_note)
                 strung_fretboard.append(strung_notes)
             headstock_copy = self.headstock.copy()
-            headstock_copy[4] += "".join(
+            # TODO: make this not so hard-coded
+            headstock_copy[3] += "".join(
                 ["_"] * sum(self.fret_spacing)
             )  # extend the neck of the guitar as necessary
-            for i, string in zip(range(5, 11), strung_fretboard):
+            for i, string in zip(range(4, 10), strung_fretboard):
                 headstock_copy[i] += "".join(string)
             rendered_fretboard = "\n".join(headstock_copy)
 
