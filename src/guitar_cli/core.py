@@ -1,4 +1,3 @@
-import enum
 import sys
 import time
 from rich.console import Console
