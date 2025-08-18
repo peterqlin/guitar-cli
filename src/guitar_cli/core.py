@@ -142,7 +142,7 @@ class Fretboard:
         except Exception as e:
             self.console.log(f"An unexpected error occurred: {e}")
 
-    def set_chord(self, chord_name: str, variation=1) -> None:
+    def set_chord(self, chord_name: str, variation: int) -> None:
         try:
             if chord_name.lower() not in [s.lower() for s in self.chord_names]:
                 raise Exception(f"Chord {chord_name} not found!")

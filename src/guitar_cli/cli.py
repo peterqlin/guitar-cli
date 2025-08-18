@@ -27,8 +27,8 @@ def cli():
 
 @cli.command()
 @click.argument("chord")
-@click.option("-v", "--variation", type=int)
-def show(chord, variation=1):
+@click.option("-v", "--variation", type=int, default=1)
+def show(chord, variation):
     global running
     global toggle_event
     listener = threading.Thread(target=key_listener, daemon=True)
