@@ -26,7 +26,9 @@ def cli():
 
 
 @cli.command()
-def show():
+@click.argument("chord")
+@click.option("-v", "--variation", type=int)
+def show(chord, variation=1):
     global running
     global toggle_event
     listener = threading.Thread(target=key_listener, daemon=True)
@@ -35,6 +37,7 @@ def show():
     click.echo("Press t to toggle colors off/on. Press q to quit.")
 
     f = Fretboard()
+    f.set_chord(chord, variation=variation)
     f.show()
     while running:
         if toggle_event:

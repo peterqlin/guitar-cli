@@ -42,6 +42,37 @@ class Fretboard:
             "b",
         ]  # initialize chromatic scale
 
+        self.chord_names = [
+            "A",
+            "Am",
+            "A7",
+            "Amaj7",
+            "B",
+            "Bm",
+            "B7",
+            "Bmaj7",
+            "C",
+            "Cm",
+            "C7",
+            "Cmaj7",
+            "D",
+            "Dm",
+            "D7",
+            "Dmaj7",
+            "E",
+            "Em",
+            "E7",
+            "Emaj7",
+            "F",
+            "Fm",
+            "F7",
+            "Fmaj7",
+            "G",
+            "Gm",
+            "G7",
+            "Gmaj7",
+        ]
+
         # TODO: maybe change how this is stored, but for now it'll work
         init_pos = [
             self.chromatic_scale.index(n) for n in ["e", "b", "g", "d", "a", "e"]
@@ -109,10 +140,17 @@ class Fretboard:
             self.console.print(rendered_fretboard)
             time.sleep(2)
         except Exception as e:
-            print(f"An unexpected error occurred: {e}")
+            self.console.log(f"An unexpected error occurred: {e}")
 
-    def set_chord(self, chord: list[int]) -> None:
+    def set_chord(self, chord_name: str, variation=1) -> None:
         try:
-            self.chord = chord
+            if chord_name.lower() not in [s.lower() for s in self.chord_names]:
+                raise Exception(f"Chord {chord_name} not found!")
+            # TODO: replace magic number
+            if variation < 1 or variation > 6:
+                raise Exception(
+                    f"Variation {variation} for chord {chord_name} not found!"
+                )
+            self.chord = []
         except Exception as e:
-            print(f"An unexpected error occurred: {e}")
+            self.console.log(f"An unexpected error occurred: {e}")
