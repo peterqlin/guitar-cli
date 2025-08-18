@@ -1,4 +1,4 @@
-# guitar-cli
+# frets
 CLI for visualizing guitar chords and more
 
 ## running this locally
@@ -6,4 +6,4 @@ CLI for visualizing guitar chords and more
 - `.venv/Scripts/activate`
 - `uv sync` or `uv sync --extra dev` (for pre-commit tools)
 - `uv pip install -e .`
-- `gcli show c`
+- `frets show c`

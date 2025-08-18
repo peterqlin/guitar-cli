@@ -129,16 +129,16 @@ class Fretboard:
                 strung_fretboard.append(strung_notes)
             headstock_copy = self.headstock.copy()
             # TODO: make this not so hard-coded
-            headstock_copy[3] += "".join(
+            start_idx = 0
+            headstock_copy[start_idx] += "".join(
                 ["_"] * sum(self.fret_spacing)
             )  # extend the neck of the guitar as necessary
-            for i, string in zip(range(4, 10), strung_fretboard):
+            for i, string in zip(range(start_idx + 1, start_idx + 7), strung_fretboard):
                 headstock_copy[i] += "".join(string)
             rendered_fretboard = "\n".join(headstock_copy)
 
             # self.console.log(rendered_fretboard, markup=False)
             self.console.print(rendered_fretboard)
-            time.sleep(2)
         except Exception as e:
             self.console.log(f"An unexpected error occurred: {e}")
 
