@@ -1,6 +1,16 @@
-def get_rgb_text(text: str, rgb_color: tuple = (240, 240, 240)) -> str:
-    r, g, b = rgb_color
-    return f"[rgb({r},{g},{b})]{text}[/]"
+def get_rgb_text(
+    text: str, fg_color: tuple | None = None, bg_color: tuple | None = None
+) -> str:
+    if not (fg_color or bg_color):
+        return text
+    style = ""
+    if fg_color:
+        r_f, g_f, b_f = fg_color
+        style += f"[rgb({r_f},{g_f},{b_f})]"
+    if bg_color:
+        r_b, g_b, b_b = bg_color
+        style += f"[on rgb({r_b},{g_b},{b_b})]"
+    return f"{style}{text}[/]"
 
 
 def get_fret_spacing(scale_length: float, fret_count: int) -> list[int]:

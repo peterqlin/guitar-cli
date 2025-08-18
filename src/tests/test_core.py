@@ -6,11 +6,14 @@ install()
 
 
 def test_show():
-    # fbs = [Fretboard(), Fretboard(rgb_frets=False)]
-    # for fb in fbs:
-    #     fb.show()
-    f = Fretboard()
-    f.show()
+    fbs = [
+        Fretboard(),
+        Fretboard(rgb_frets=False),
+        Fretboard(labeled_frets=False),
+        Fretboard(rgb_frets=False, labeled_frets=False),
+    ]
+    for fb in fbs:
+        fb.show()
 
 
 if __name__ == "__main__":

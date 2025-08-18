@@ -1,11 +1,16 @@
+from cProfile import label
+from tkinter.ttk import LabeledScale
 from rich.console import Console
 from .utils import get_fret_spacing, get_rgb_text
 
 
 class Fretboard:
-    def __init__(self, fretboard_length=200, fret_count=12, rgb_frets=True) -> None:
+    def __init__(
+        self, fretboard_length=200, fret_count=12, rgb_frets=True, labeled_frets=True
+    ) -> None:
         self.console = Console()
         self.rgb_frets = rgb_frets
+        self.labeled_frets = labeled_frets
         self.fret_spacing = get_fret_spacing(fretboard_length, fret_count)
         self.color_map = {
             "e": (31, 119, 180),  # Blue
@@ -86,8 +91,12 @@ class Fretboard:
             with open(
                 "src/guitar_cli/headstock_ascii_art.txt", "r", encoding="utf-8"
             ) as f:
+                # TODO: add underline to second-to-last row
                 # set color of ascii art to white
-                self.headstock = [get_rgb_text(line.rstrip("\n")) for line in f]
+                self.headstock = [
+                    get_rgb_text(line.rstrip("\n"), fg_color=(240, 240, 240))
+                    for line in f
+                ]
         except Exception as e:
             self.console.log(f"Failed to load headstock ASCII art: {e}")
             self.headstock = []
@@ -101,16 +110,22 @@ class Fretboard:
         """
         try:
             self.console.clear()
+            white_rgb = (240, 240, 240)
+            black_rgb = (0, 0, 0)
             strung_fretboard = []
             for string_idx, notes in enumerate(self.fretboard):
                 strung_notes = []
                 for note_idx, note in enumerate(notes):
+                    display_note = note if self.labeled_frets else "|"
                     # need this for spacing
-                    string_segment = f"{note:{'-' if string_idx < 3 else '='}<{self.fret_spacing[note_idx]}}"[
-                        len(note) :
-                    ]
-                    styled_note = get_rgb_text(note)
-                    styled_string_segment = get_rgb_text(string_segment)
+                    note_and_string_segment = f"{display_note:{'-' if string_idx < 3 else '='}<{self.fret_spacing[note_idx]}}"
+                    string_segment = note_and_string_segment[len(display_note) :]
+                    styled_note = get_rgb_text(
+                        display_note, fg_color=black_rgb, bg_color=white_rgb
+                    )
+                    styled_string_segment = get_rgb_text(
+                        string_segment, fg_color=black_rgb, bg_color=white_rgb
+                    )
                     if self.rgb_frets:
                         # set string color such that string to the left of note is same color as note
                         next_color = self.color_map[
@@ -119,16 +134,21 @@ class Fretboard:
                                 % len(self.chromatic_scale)
                             ]
                         ]
-                        styled_note = get_rgb_text(note, self.color_map[note])
-                        styled_string_segment = get_rgb_text(string_segment, next_color)
+                        styled_note = get_rgb_text(
+                            display_note,
+                            fg_color=white_rgb,
+                            bg_color=self.color_map[note],
+                        )
+                        styled_string_segment = get_rgb_text(
+                            string_segment, bg_color=next_color
+                        )
                     strung_notes.append(styled_note + styled_string_segment)
                 strung_fretboard.append(strung_notes)
             headstock_copy = self.headstock.copy()
             # TODO: make this not so hard-coded
-            start_idx = 0
+            start_idx = 1
             # extend the neck of the guitar
-            headstock_copy[start_idx] += "".join(["_"] * sum(self.fret_spacing))
-            for i, string in zip(range(start_idx + 1, start_idx + 7), strung_fretboard):
+            for i, string in zip(range(start_idx, start_idx + 6), strung_fretboard):
                 headstock_copy[i] += "".join(string)
             rendered_fretboard = "\n".join(headstock_copy)
 
