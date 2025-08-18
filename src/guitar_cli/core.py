@@ -1,5 +1,3 @@
-from cProfile import label
-from tkinter.ttk import LabeledScale
 from rich.console import Console
 from .utils import get_fret_spacing, get_rgb_text
 
@@ -11,6 +9,7 @@ class Fretboard:
         self.console = Console()
         self.rgb_frets = rgb_frets
         self.labeled_frets = labeled_frets
+        self.fret_count = fret_count
         self.fret_spacing = get_fret_spacing(fretboard_length, fret_count)
         self.color_map = {
             "e": (31, 119, 180),  # Blue
@@ -109,54 +108,26 @@ class Fretboard:
         """
         Handle rendering the fretboard
         """
-        try:
-            self.console.clear()
-            white_rgb = (240, 240, 240)
-            black_rgb = (0, 0, 0)
-            strung_fretboard = []
-            for notes in self.fretboard:
-                strung_notes = []
-                for note_idx, note in enumerate(notes):
-                    display_note = note if self.labeled_frets else "|"
-                    # need this for spacing
-                    note_and_string_segment = (
-                        f"{display_note: <{self.fret_spacing[note_idx]}}"
-                    )
-                    string_segment = note_and_string_segment[len(display_note) :]
-                    styled_note = get_rgb_text(
-                        display_note, fg_color=black_rgb, bg_color=white_rgb
-                    )
-                    styled_string_segment = get_rgb_text(
-                        string_segment, fg_color=black_rgb, bg_color=white_rgb
-                    )
-                    if self.rgb_frets:
-                        # set string color such that string to the left of note is same color as note
-                        next_color = self.color_map[
-                            self.chromatic_scale[
-                                (self.chromatic_scale.index(note) + 1)
-                                % len(self.chromatic_scale)
-                            ]
-                        ]
-                        styled_note = get_rgb_text(
-                            display_note,
-                            fg_color=white_rgb,
-                            bg_color=self.color_map[note],
-                        )
-                        styled_string_segment = get_rgb_text(
-                            string_segment, bg_color=next_color
-                        )
-                    strung_notes.append(styled_note + styled_string_segment)
-                strung_fretboard.append(strung_notes)
+        # try:
+        self.console.clear()
+        white_rgb = (240, 240, 240)
+        black_rgb = (0, 0, 0)
 
-            rendered_fretboard = self.headstock
-            for i, string in enumerate(strung_fretboard):
-                rendered_fretboard = rendered_fretboard.replace(
-                    f"({i})", "".join(string)
+        fretboard_arr = [
+            "|".join([f"    (n{string_idx},{i})   " for i in range(self.fret_count)])
+            for string_idx in range(6)
+        ]
+        for string_idx, notes in enumerate(self.fretboard):
+            for note_idx, note in enumerate(notes):
+                fretboard_arr[string_idx] = fretboard_arr[string_idx].replace(
+                    f"(n{string_idx},{note_idx})", f"{note: <2}"
                 )
 
-            self.console.print("\n" + rendered_fretboard + "\n")
-        except Exception as e:
-            self.console.log(f"An unexpected error occurred: {e}")
+        rendered_fretboard = "\n".join(fretboard_arr)
+
+        self.console.print("\n" + rendered_fretboard + "\n")
+        # except Exception as e:
+        # self.console.log(f"An unexpected error occurred: {e}")
 
     def set_chord(self, chord_name: str, variation: int) -> None:
         try:
