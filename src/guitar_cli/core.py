@@ -113,15 +113,16 @@ class Fretboard:
         white_rgb = (240, 240, 240)
         black_rgb = (0, 0, 0)
 
+        styled_fret = get_rgb_text(" ", bg_color=(50, 50, 50))
         fretboard_arr = [
-            "|".join([f"    (n{string_idx},{i})   " for i in range(self.fret_count)])
-            for string_idx in range(6)
+            styled_fret.join(
+                [
+                    get_rgb_text(f"    {note: <2}   ", bg_color=self.color_map[note])
+                    for note in notes
+                ]
+            )
+            for notes in self.fretboard
         ]
-        for string_idx, notes in enumerate(self.fretboard):
-            for note_idx, note in enumerate(notes):
-                fretboard_arr[string_idx] = fretboard_arr[string_idx].replace(
-                    f"(n{string_idx},{note_idx})", f"{note: <2}"
-                )
 
         rendered_fretboard = "\n".join(fretboard_arr)
 
