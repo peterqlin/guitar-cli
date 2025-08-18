@@ -13,6 +13,10 @@ def get_rgb_text(
     return f"{style}{text}[/]"
 
 
+def dim_rgb(color: tuple, proportion: float) -> tuple:
+    return tuple(round(v * proportion) for v in color)
+
+
 def get_fret_spacing(scale_length: float, fret_count: int) -> list[int]:
     """
     Calculate the spacing between fret n and fret n+1 on a guitar.

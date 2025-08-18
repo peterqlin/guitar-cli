@@ -1,5 +1,5 @@
 from rich.console import Console
-from .utils import get_fret_spacing, get_rgb_text
+from .utils import get_fret_spacing, get_rgb_text, dim_rgb
 
 
 class Fretboard:
@@ -75,6 +75,8 @@ class Fretboard:
             "Gmaj7",
         ]
 
+        self.chord_dict = {"c": [0, 1, 0, 2, 3, -1]}
+
         # TODO: maybe change how this is stored, but for now it'll work
         # get initial note positions, high e to low e
         init_pos = [
@@ -108,6 +110,7 @@ class Fretboard:
         """
         Handle rendering the fretboard
         """
+        # TODO: make it customizable (yes/no rgb, etc)
         # try:
         self.console.clear()
         white_rgb = (240, 240, 240)
@@ -117,11 +120,17 @@ class Fretboard:
         fretboard_arr = [
             styled_fret.join(
                 [
-                    get_rgb_text(f"    {note: <2}   ", bg_color=self.color_map[note])
-                    for note in notes
+                    get_rgb_text(
+                        f"    {note: <2}   ",
+                        bg_color=dim_rgb(
+                            self.color_map[note],
+                            1 if self.chord[string_idx] == note_idx else 0.3,
+                        ),
+                    )
+                    for note_idx, note in enumerate(notes)
                 ]
             )
-            for notes in self.fretboard
+            for string_idx, notes in enumerate(self.fretboard)
         ]
 
         rendered_fretboard = "\n".join(fretboard_arr)
@@ -139,6 +148,6 @@ class Fretboard:
                 raise Exception(
                     f"Variation {variation} for chord {chord_name} not found!"
                 )
-            self.chord = []
+            self.chord = self.chord_dict[chord_name.strip().lower()]
         except Exception as e:
             self.console.log(f"An unexpected error occurred: {e}")

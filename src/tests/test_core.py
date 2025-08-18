@@ -16,5 +16,12 @@ def test_show():
         fb.show()
 
 
+def test_chord():
+    f = Fretboard()
+    f.set_chord("c", 1)
+    f.show()
+
+
 if __name__ == "__main__":
-    test_show()
+    # test_show()
+    test_chord()
