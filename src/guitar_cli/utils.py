@@ -1,3 +1,5 @@
+init_notes = ["e", "b", "g", "d", "a", "e"]
+
 chromatic_scale = [
     "c",
     "c#",

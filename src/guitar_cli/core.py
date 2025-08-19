@@ -1,7 +1,7 @@
 import re
 from rich.console import Console
 from rich.text import Text
-from .utils import get_fret_spacing, get_rgb_text, dim_rgb, chromatic_scale
+from .utils import get_fret_spacing, get_rgb_text, dim_rgb, chromatic_scale, init_notes
 
 
 class Fretboard:
@@ -45,7 +45,7 @@ class Fretboard:
 
         # TODO: maybe change how this is stored, but for now it'll work
         # get initial note positions, high e to low e
-        init_pos = [chromatic_scale.index(n) for n in ["e", "b", "g", "d", "a", "e"]]
+        init_pos = [chromatic_scale.index(n) for n in init_notes]
         # TODO: fix bug where zooming in and out causes visual glitches
         # TODO: add scrolling when fretboard doesn't fit in terminal
         # create fretboard with inc indices corresponding to lower pitch strings
@@ -79,27 +79,43 @@ class Fretboard:
         black_rgb = (0, 0, 0)
 
         styled_fret = get_rgb_text("┼", bg_color=black_rgb)
+        styled_string = get_rgb_text("───", bg_color=black_rgb)
         fretboard_arr = [
-            styled_fret
+            get_rgb_text(
+                f"{(init_notes[string_idx] if self.labeled_frets else "─")}",
+                bg_color=dim_rgb(
+                    (
+                        self.color_map[init_notes[string_idx]]
+                        if self.rgb_frets
+                        else white_rgb
+                    ),
+                    (
+                        (1 if self.chord[string_idx] == 0 else 0)
+                        if self.display_mode
+                        == "chord"  # TODO: add an elif for `find` mode
+                        else (1 if self.find_note == init_notes[string_idx] else 0)
+                    ),
+                ),
+            )
+            + styled_fret
+            + styled_fret
             + styled_fret.join(
                 [
-                    get_rgb_text(
-                        (
-                            f"────{(note if self.labeled_frets else ""):─<2}───"
-                            if note_idx > 0
-                            else f"{(note if self.labeled_frets else "─")}"
-                        ),
+                    styled_string
+                    + get_rgb_text(
+                        f"─{(note if self.labeled_frets else ""):─<2}",
                         bg_color=dim_rgb(
                             (self.color_map[note] if self.rgb_frets else white_rgb),
                             (
-                                (1 if note_idx == self.chord[string_idx] else 0)
+                                (1 if note_idx + 1 == self.chord[string_idx] else 0)
                                 if self.display_mode
                                 == "chord"  # TODO: add an elif for `find` mode
                                 else (1 if note == self.find_note else 0)
                             ),
                         ),
                     )
-                    for note_idx, note in enumerate(notes)
+                    + styled_string
+                    for note_idx, note in enumerate(notes[1:])
                 ]
             )
             for string_idx, notes in enumerate(self.fretboard)
