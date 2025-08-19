@@ -72,6 +72,9 @@ class Fretboard:
     def toggle_rgb_frets(self) -> None:
         self.rgb_frets = not self.rgb_frets
 
+    def toggle_labeled_frets(self) -> None:
+        self.labeled_frets = not self.labeled_frets
+
     def show(self) -> Text:
         """
         Handle rendering the fretboard
@@ -85,7 +88,11 @@ class Fretboard:
             styled_fret.join(
                 [
                     get_rgb_text(
-                        (f"    {note: <2}   " if note_idx > 0 else f" {note: <2}"),
+                        (
+                            f"    {(note if self.labeled_frets else ""): <2}   "
+                            if note_idx > 0
+                            else f" {(note if self.labeled_frets else ""): <2}"
+                        ),
                         bg_color=dim_rgb(
                             (self.color_map[note] if self.rgb_frets else white_rgb),
                             1 if self.chord[string_idx] == note_idx else 0,

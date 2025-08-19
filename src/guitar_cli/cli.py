@@ -6,16 +6,20 @@ from rich.live import Live
 from .core import Fretboard
 
 running = True
-toggle_event = False
+rgb_frets_toggled = False
+labeled_frets_toggled = False
 
 
 def key_listener():
     global running
-    global toggle_event
+    global rgb_frets_toggled
+    global labeled_frets_toggled
     while running:
         key = readchar.readchar()
         if key == "t":
-            toggle_event = True
+            rgb_frets_toggled = True
+        if key == "y":
+            labeled_frets_toggled = True
         if key == "q":
             click.echo("Quitting...")
             running = False
@@ -31,21 +35,28 @@ def cli():
 @click.option("-v", "--variation", type=int, default=1)
 def show(chord, variation):
     global running
-    global toggle_event
+    global rgb_frets_toggled
+    global labeled_frets_toggled
     listener = threading.Thread(target=key_listener, daemon=True)
     listener.start()
 
-    click.echo("Press t to toggle colors off/on. Press q to quit.")
+    click.echo(
+        "Press t to toggle colors off/on. Press y to toggle labeled frets. Press q to quit."
+    )
 
     f = Fretboard()
     f.set_chord(chord, variation=variation)
     f.show()
     with Live(f.show(), refresh_per_second=4) as live:
         while running:
-            if toggle_event:
-                toggle_event = False
+            if rgb_frets_toggled:
+                rgb_frets_toggled = False
                 f.toggle_rgb_frets()
-                live.update(f.show())
+            if labeled_frets_toggled:
+                labeled_frets_toggled = False
+                f.toggle_labeled_frets()
+
+            live.update(f.show())
             time.sleep(0.05)
 
 
