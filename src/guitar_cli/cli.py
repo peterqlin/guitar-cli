@@ -18,6 +18,7 @@ state = {
     "labeled_frets_toggled": False,
     "note_to_find": "",
     "find_note_toggled": False,
+    "pan_distance": 3,
 }
 
 
@@ -91,7 +92,7 @@ def show(chord, variation):
                 f.toggle_labeled_frets()
             if state["pan_fretboard_toggled"]:
                 state["pan_fretboard_toggled"] = False
-                f.pan_fretboard(3 if state["pan_key"] == "right" else -3)
+                f.pan_fretboard(state["pan_key"], state["pan_distance"])
 
             live.update(f.render())
             time.sleep(0.05)
@@ -118,7 +119,7 @@ def find(note):
                 f.set_find_note(state["note_to_find"])
             if state["pan_fretboard_toggled"]:
                 state["pan_fretboard_toggled"] = False
-                f.pan_fretboard(1 if state["pan_key"] == "right" else -1)
+                f.pan_fretboard(state["pan_key"], state["pan_distance"])
 
             live.update(f.render())
             f.render()

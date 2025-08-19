@@ -28,7 +28,7 @@ class Fretboard:
         self.fret_spacing = get_fret_spacing(fretboard_length, fret_count)
         self.fretboard_window_width = shutil.get_terminal_size().columns
         self.fretboard_window_start = 0
-        self.total_fretboard_width = 1000  # TODO: don't hard-code this
+        self.total_fretboard_width = 200  # TODO: don't hard-code this
         self.display_mode = display_mode
         self.color_map = {
             "e": (31, 119, 180),  # Blue
@@ -81,13 +81,12 @@ class Fretboard:
     def toggle_labeled_frets(self) -> None:
         self.labeled_frets = not self.labeled_frets
 
-    def pan_fretboard(self, delta: int) -> None:
-        new_window_start = self.fretboard_window_start + delta
-        if delta < 0:
-            self.fretboard_window_start = max(new_window_start, 0)
+    def pan_fretboard(self, direction: str, distance: int) -> None:
+        if direction == "left":
+            self.fretboard_window_start = max(self.fretboard_window_start - distance, 0)
         else:
             self.fretboard_window_start = min(
-                new_window_start,
+                self.fretboard_window_start + distance,
                 self.total_fretboard_width - self.fretboard_window_width,
             )
 
