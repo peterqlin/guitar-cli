@@ -1,7 +1,14 @@
 import re
 from rich.console import Console
 from rich.text import Text
-from .utils import get_fret_spacing, get_rgb_text, dim_rgb, chromatic_scale, init_notes
+from .utils import (
+    get_fret_spacing,
+    get_fret_dimness,
+    get_rgb_text,
+    dim_rgb,
+    chromatic_scale,
+    init_notes,
+)
 
 
 class Fretboard:
@@ -89,11 +96,12 @@ class Fretboard:
                         if self.rgb_frets
                         else white_rgb
                     ),
-                    (
-                        (1 if self.chord[string_idx] == 0 else 0)
-                        if self.display_mode
-                        == "chord"  # TODO: add an elif for `find` mode
-                        else (1 if self.find_note == init_notes[string_idx] else 0)
+                    get_fret_dimness(
+                        self.display_mode,
+                        note=init_notes[string_idx],
+                        note_idx=0,
+                        chord_idx=self.chord[string_idx],
+                        find_note=self.find_note,
                     ),
                 ),
             )
@@ -106,11 +114,12 @@ class Fretboard:
                         f"─{(note if self.labeled_frets else ""):─<2}",
                         bg_color=dim_rgb(
                             (self.color_map[note] if self.rgb_frets else white_rgb),
-                            (
-                                (1 if note_idx + 1 == self.chord[string_idx] else 0)
-                                if self.display_mode
-                                == "chord"  # TODO: add an elif for `find` mode
-                                else (1 if note == self.find_note else 0)
+                            get_fret_dimness(
+                                self.display_mode,
+                                note=note,
+                                note_idx=note_idx + 1,
+                                chord_idx=self.chord[string_idx],
+                                find_note=self.find_note,
                             ),
                         ),
                     )

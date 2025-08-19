@@ -52,5 +52,13 @@ def get_fret_spacing(scale_length: float, fret_count: int) -> list[int]:
     ]
 
 
+def get_fret_dimness(display_mode: str, **kwargs) -> float:
+    if display_mode == "chord":
+        return 1 if kwargs["note_idx"] == kwargs["chord_idx"] else 0
+    if display_mode == "find":
+        return 1 if kwargs["note"] == kwargs["find_note"] else 0
+    raise Exception("Invalid display mode!")
+
+
 def step(note: str, delta: int) -> str:
     return chromatic_scale[(chromatic_scale.index(note) + delta) % len(chromatic_scale)]
