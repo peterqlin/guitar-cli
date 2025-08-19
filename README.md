@@ -1,5 +1,7 @@
 # frets
-CLI for visualizing guitar chords and more
+CLI for visualizing guitar chords, finding notes, and more
+
+![Demo](assets/frets_demo.gif)
 
 ## running this locally
 - `uv venv`
