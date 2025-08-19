@@ -1,3 +1,19 @@
+chromatic_scale = [
+    "c",
+    "c#",
+    "d",
+    "d#",
+    "e",
+    "f",
+    "f#",
+    "g",
+    "g#",
+    "a",
+    "a#",
+    "b",
+]
+
+
 def get_rgb_text(
     text: str, fg_color: tuple | None = None, bg_color: tuple | None = None
 ) -> str:
@@ -32,3 +48,7 @@ def get_fret_spacing(scale_length: float, fret_count: int) -> list[int]:
         round(scale_length * (1 / (2 ** (fret / 12)) - 1 / (2 ** ((fret + 1) / 12))))
         for fret in range(fret_count)
     ]
+
+
+def step(note: str, delta: int) -> str:
+    return chromatic_scale[(chromatic_scale.index(note) + delta) % len(chromatic_scale)]

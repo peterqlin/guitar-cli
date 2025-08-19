@@ -1,6 +1,6 @@
 from rich.console import Console
 from rich.text import Text
-from .utils import get_fret_spacing, get_rgb_text, dim_rgb
+from .utils import get_fret_spacing, get_rgb_text, dim_rgb, chromatic_scale
 
 
 class Fretboard:
@@ -37,20 +37,6 @@ class Fretboard:
         self.find_note = "e"
 
         # TODO: allow toggle between equivalent sharps and flats
-        self.chromatic_scale = [
-            "c",
-            "c#",
-            "d",
-            "d#",
-            "e",
-            "f",
-            "f#",
-            "g",
-            "g#",
-            "a",
-            "a#",
-            "b",
-        ]
 
         self.valid_chord_names = set(["c", "cmaj"])
 
@@ -58,13 +44,11 @@ class Fretboard:
 
         # TODO: maybe change how this is stored, but for now it'll work
         # get initial note positions, high e to low e
-        init_pos = [
-            self.chromatic_scale.index(n) for n in ["e", "b", "g", "d", "a", "e"]
-        ]
+        init_pos = [chromatic_scale.index(n) for n in ["e", "b", "g", "d", "a", "e"]]
         # TODO: change this to adapt to > 12 frets
         # create fretboard with inc indices corresponding to lower pitch strings
         self.fretboard = [
-            self.chromatic_scale[pos:] + self.chromatic_scale[:pos] for pos in init_pos
+            chromatic_scale[pos:] + chromatic_scale[:pos] for pos in init_pos
         ]
 
         try:

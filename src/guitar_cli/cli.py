@@ -5,7 +5,9 @@ import time
 from string import ascii_lowercase
 from rich.live import Live
 from .core import Fretboard
+from .utils import step
 
+# globals
 running = True
 
 # `show` globals
@@ -13,8 +15,8 @@ rgb_frets_toggled = False
 labeled_frets_toggled = False
 
 # `find` globals
-note_to_find = "e"
-note_toggled = False
+note_to_find = ""
+find_note_toggled = False
 
 
 def show_key_listener():
@@ -22,7 +24,7 @@ def show_key_listener():
     global rgb_frets_toggled
     global labeled_frets_toggled
     while running:
-        key = readchar.readchar()
+        key = readchar.readkey()
         if key == "t":
             rgb_frets_toggled = True
         if key == "y":
@@ -35,12 +37,18 @@ def show_key_listener():
 def find_key_listener():
     global running
     global note_to_find
-    global note_toggled
+    global find_note_toggled
     while running:
-        key = readchar.readchar()
+        key = readchar.readkey()
         if key in ascii_lowercase[:7]:
             note_to_find = key
-            note_toggled = True
+            find_note_toggled = True
+        if key == readchar.key.UP or key == readchar.key.RIGHT:
+            note_to_find = step(note_to_find, 1)
+            find_note_toggled = True
+        if key == readchar.key.DOWN or key == readchar.key.LEFT:
+            note_to_find = step(note_to_find, -1)
+            find_note_toggled = True
         if key == "q":
             click.echo("Quitting...")
             running = False
@@ -86,7 +94,7 @@ def show(chord, variation):
 def find(note):
     global running
     global note_to_find
-    global note_toggled
+    global find_note_toggled
     listener = threading.Thread(target=find_key_listener, daemon=True)
     listener.start()
 
@@ -94,14 +102,16 @@ def find(note):
         "Press any natural note. Press left/down arrow for half step down, right/up arrow for half step up."
     )
 
+    note_to_find = note
     f = Fretboard("find")
-    f.set_find_note(note)
+    f.set_find_note(note_to_find)
     f.render()
     with Live(f.render(), refresh_per_second=4) as live:
         while running:
-            if note_toggled:
-                note_toggled = False
+            if find_note_toggled:
+                find_note_toggled = False
                 f.set_find_note(note_to_find)
 
             live.update(f.render())
+            f.render()
             time.sleep(0.05)
