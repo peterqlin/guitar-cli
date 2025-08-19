@@ -1,4 +1,5 @@
 from rich.console import Console
+from rich.text import Text
 from .utils import get_fret_spacing, get_rgb_text, dim_rgb
 
 
@@ -77,24 +78,25 @@ class Fretboard:
     def toggle_rgb_frets(self) -> None:
         self.rgb_frets = not self.rgb_frets
 
-    def show(self) -> None:
+    def show(self) -> Text:
         """
         Handle rendering the fretboard
         """
         # TODO: make it customizable (yes/no rgb, etc)
         # try:
-        self.console.clear()
+        # self.console.clear()
         white_rgb = (240, 240, 240)
+        gray_rgb = (150, 150, 150)
         black_rgb = (0, 0, 0)
 
-        styled_fret = get_rgb_text(" ", bg_color=(150, 150, 150))
+        styled_fret = get_rgb_text(" ", bg_color=gray_rgb)
         fretboard_arr = [
             styled_fret.join(
                 [
                     get_rgb_text(
-                        f"    {note: <2}   ",
+                        (f"    {note: <2}   " if note_idx > 0 else f" {note: <2}"),
                         bg_color=dim_rgb(
-                            self.color_map[note],
+                            (self.color_map[note] if self.rgb_frets else white_rgb),
                             1 if self.chord[string_idx] == note_idx else 0,
                         ),
                     )
@@ -106,7 +108,8 @@ class Fretboard:
 
         rendered_fretboard = "\n".join(fretboard_arr)
 
-        self.console.print("\n" + rendered_fretboard + "\n")
+        # self.console.print("\n" + rendered_fretboard + "\n")
+        return Text.from_markup("\n" + rendered_fretboard + "\n")
         # except Exception as e:
         # self.console.log(f"An unexpected error occurred: {e}")
 

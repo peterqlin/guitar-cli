@@ -2,6 +2,7 @@ import click
 import readchar
 import threading
 import time
+from rich.live import Live
 from .core import Fretboard
 
 running = True
@@ -39,9 +40,22 @@ def show(chord, variation):
     f = Fretboard()
     f.set_chord(chord, variation=variation)
     f.show()
-    while running:
-        if toggle_event:
-            toggle_event = False
-            f.toggle_rgb_frets()
-            f.show()
-        time.sleep(0.05)
+    with Live(f.show(), refresh_per_second=4) as live:
+        while running:
+            if toggle_event:
+                toggle_event = False
+                f.toggle_rgb_frets()
+                live.update(f.show())
+            time.sleep(0.05)
+
+
+@cli.command()
+@click.argument("note")
+def find(note):
+    global running
+    listener = threading.Thread(target=key_listener, daemon=True)
+    listener.start()
+
+    click.echo(
+        "Press any natural note. Press left/down arrow for half step down, right/up arrow for half step up."
+    )
