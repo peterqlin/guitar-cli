@@ -9,6 +9,7 @@ from .utils import (
     get_dim_rgb,
     chromatic_scale,
     init_notes,
+    styled_text_slice,
 )
 
 
@@ -155,10 +156,11 @@ class Fretboard:
         fretboard_lines = []
         for line in rendered_fretboard.split("\n"):
             fretboard_lines.append(
-                line[
-                    self.fretboard_window_start : self.fretboard_window_start
-                    + self.fretboard_window_width
-                ]
+                styled_text_slice(
+                    line,
+                    self.fretboard_window_start,
+                    self.fretboard_window_start + self.fretboard_window_width,
+                )
             )
 
         return Text.from_markup("\n" + "\n".join(fretboard_lines) + "\n")
