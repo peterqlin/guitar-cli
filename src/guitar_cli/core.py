@@ -79,7 +79,7 @@ class Fretboard:
         gray_rgb = (150, 150, 150)
         black_rgb = (0, 0, 0)
 
-        styled_fret = get_rgb_text(" ", bg_color=gray_rgb)
+        styled_fret = get_rgb_text("┼", bg_color=black_rgb)
         fretboard_arr = [
             styled_fret.join(
                 [
