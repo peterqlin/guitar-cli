@@ -58,9 +58,7 @@ class Fretboard:
         ]
 
         try:
-            with open(
-                "src/guitar_cli/headstock_ascii_art.txt", "r", encoding="utf-8"
-            ) as f:
+            with open("assets/fender_strat_headstock.txt", "r", encoding="utf-8") as f:
                 self.headstock = f.read()
         except Exception as e:
             self.console.log(f"Failed to load headstock ASCII art: {e}")
