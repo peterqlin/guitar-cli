@@ -5,7 +5,7 @@ from .utils import (
     get_fret_spacing,
     get_fret_dimness,
     get_rgb_text,
-    dim_rgb,
+    get_dim_rgb,
     chromatic_scale,
     init_notes,
 )
@@ -90,7 +90,7 @@ class Fretboard:
         fretboard_arr = [
             get_rgb_text(
                 f"{(init_notes[string_idx] if self.labeled_frets else "─")}",
-                bg_color=dim_rgb(
+                bg_color=get_dim_rgb(
                     (
                         self.color_map[init_notes[string_idx]]
                         if self.rgb_frets
@@ -112,7 +112,7 @@ class Fretboard:
                     styled_string
                     + get_rgb_text(
                         f"─{(note if self.labeled_frets else ""):─<2}",
-                        bg_color=dim_rgb(
+                        bg_color=get_dim_rgb(
                             (self.color_map[note] if self.rgb_frets else white_rgb),
                             get_fret_dimness(
                                 self.display_mode,

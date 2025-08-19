@@ -31,7 +31,7 @@ def get_rgb_text(
     return f"{style}{text}[/]"
 
 
-def dim_rgb(color: tuple, proportion: float) -> tuple:
+def get_dim_rgb(color: tuple, proportion: float) -> tuple:
     return tuple(round(v * proportion) for v in color)
 
 
