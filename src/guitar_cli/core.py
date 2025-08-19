@@ -64,12 +64,6 @@ class Fretboard:
             with open(
                 "src/guitar_cli/headstock_ascii_art.txt", "r", encoding="utf-8"
             ) as f:
-                # TODO: add underline to second-to-last row
-                # set color of ascii art to white
-                # self.headstock = [
-                #     get_rgb_text(line.rstrip("\n"), fg_color=(240, 240, 240))
-                #     for line in f
-                # ]
                 self.headstock = f.read()
         except Exception as e:
             self.console.log(f"Failed to load headstock ASCII art: {e}")
@@ -82,9 +76,6 @@ class Fretboard:
         """
         Handle rendering the fretboard
         """
-        # TODO: make it customizable (yes/no rgb, etc)
-        # try:
-        # self.console.clear()
         white_rgb = (240, 240, 240)
         gray_rgb = (150, 150, 150)
         black_rgb = (0, 0, 0)
@@ -108,10 +99,7 @@ class Fretboard:
 
         rendered_fretboard = "\n".join(fretboard_arr)
 
-        # self.console.print("\n" + rendered_fretboard + "\n")
         return Text.from_markup("\n" + rendered_fretboard + "\n")
-        # except Exception as e:
-        # self.console.log(f"An unexpected error occurred: {e}")
 
     def set_chord(self, chord_name: str, variation: int) -> None:
         try:
