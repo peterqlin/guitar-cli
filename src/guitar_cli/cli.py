@@ -6,6 +6,9 @@ from string import ascii_lowercase
 from rich.live import Live
 from .core import Fretboard
 from .utils import step
+from rich.traceback import install
+
+install()
 
 # globals
 running = True

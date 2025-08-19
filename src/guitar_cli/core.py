@@ -9,7 +9,6 @@ from .utils import (
     get_dim_rgb,
     chromatic_scale,
     init_notes,
-    styled_text_slice,
 )
 
 
@@ -153,17 +152,17 @@ class Fretboard:
             lambda m: replacements[m.group(0)], self.headstock
         )
 
-        fretboard_lines = []
+        rendered_fretboard_segment = Text()
         for line in rendered_fretboard.split("\n"):
-            fretboard_lines.append(
-                styled_text_slice(
-                    line,
-                    self.fretboard_window_start,
-                    self.fretboard_window_start + self.fretboard_window_width,
-                )
+            rendered_fretboard_segment += (
+                Text.from_markup(line)[
+                    self.fretboard_window_start : self.fretboard_window_start
+                    + self.fretboard_window_width
+                ]
+                + "\n"
             )
 
-        return Text.from_markup("\n" + "\n".join(fretboard_lines) + "\n")
+        return rendered_fretboard_segment
 
     def set_chord(self, chord_name: str, variation: int) -> None:
         chord_name = chord_name.strip().lower()

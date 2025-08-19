@@ -62,21 +62,3 @@ def get_fret_dimness(display_mode: str, **kwargs) -> float:
 
 def step(note: str, delta: int) -> str:
     return chromatic_scale[(chromatic_scale.index(note) + delta) % len(chromatic_scale)]
-
-
-def styled_text_slice(styled_text: str, start: int, end: int) -> str:
-    sliced = ""
-    nonstyled_count = start
-    i = 0
-    # TODO: brackets in the ascii art could break this
-    # TODO: slicing out entire style chunks could break this
-    while nonstyled_count < end:
-        sliced += styled_text[i]
-        if styled_text[i] == "[":
-            while styled_text[i] != "]":
-                sliced += styled_text[i]
-                i += 1
-        else:
-            nonstyled_count += 1
-        i += 1
-    return sliced
