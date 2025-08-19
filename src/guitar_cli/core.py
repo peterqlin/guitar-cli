@@ -87,7 +87,7 @@ class Fretboard:
                         (
                             f"────{(note if self.labeled_frets else ""):─<2}───"
                             if note_idx > 0
-                            else f"{(note if self.labeled_frets else "")}"
+                            else f"{(note if self.labeled_frets else "─")}"
                         ),
                         bg_color=dim_rgb(
                             (self.color_map[note] if self.rgb_frets else white_rgb),
