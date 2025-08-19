@@ -44,36 +44,7 @@ class Fretboard:
             "b",
         ]
 
-        self.chord_names = [
-            "A",
-            "Am",
-            "A7",
-            "Amaj7",
-            "B",
-            "Bm",
-            "B7",
-            "Bmaj7",
-            "C",
-            "Cm",
-            "C7",
-            "Cmaj7",
-            "D",
-            "Dm",
-            "D7",
-            "Dmaj7",
-            "E",
-            "Em",
-            "E7",
-            "Emaj7",
-            "F",
-            "Fm",
-            "F7",
-            "Fmaj7",
-            "G",
-            "Gm",
-            "G7",
-            "Gmaj7",
-        ]
+        self.valid_chord_names = set(["c", "cmaj"])
 
         self.chord_dict = {"c": [0, 1, 0, 2, 3, -1]}
 
@@ -116,7 +87,7 @@ class Fretboard:
         white_rgb = (240, 240, 240)
         black_rgb = (0, 0, 0)
 
-        styled_fret = get_rgb_text(" ", bg_color=(50, 50, 50))
+        styled_fret = get_rgb_text(" ", bg_color=(150, 150, 150))
         fretboard_arr = [
             styled_fret.join(
                 [
@@ -141,13 +112,14 @@ class Fretboard:
 
     def set_chord(self, chord_name: str, variation: int) -> None:
         try:
-            if chord_name.lower() not in [s.lower() for s in self.chord_names]:
+            chord_name = chord_name.strip().lower()
+            if chord_name not in [s.lower() for s in self.valid_chord_names]:
                 raise Exception(f"Chord {chord_name} not found!")
             # TODO: replace magic number
             if variation < 1 or variation > 6:
                 raise Exception(
                     f"Variation {variation} for chord {chord_name} not found!"
                 )
-            self.chord = self.chord_dict[chord_name.strip().lower()]
+            self.chord = self.chord_dict[chord_name]
         except Exception as e:
             self.console.log(f"An unexpected error occurred: {e}")
