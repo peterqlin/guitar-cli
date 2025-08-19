@@ -45,10 +45,15 @@ class Fretboard:
         # TODO: maybe change how this is stored, but for now it'll work
         # get initial note positions, high e to low e
         init_pos = [chromatic_scale.index(n) for n in ["e", "b", "g", "d", "a", "e"]]
-        # TODO: change this to adapt to > 12 frets
+        # TODO: fix bug where zooming in and out causes visual glitches
+        # TODO: add scrolling when fretboard doesn't fit in terminal
         # create fretboard with inc indices corresponding to lower pitch strings
         self.fretboard = [
-            chromatic_scale[pos:] + chromatic_scale[:pos] for pos in init_pos
+            [
+                chromatic_scale[(i + pos) % len(chromatic_scale)]
+                for i in range(self.fret_count)
+            ]
+            for pos in init_pos
         ]
 
         try:
@@ -80,9 +85,9 @@ class Fretboard:
                 [
                     get_rgb_text(
                         (
-                            f"    {(note if self.labeled_frets else ""): <2}   "
+                            f"────{(note if self.labeled_frets else ""):─<2}───"
                             if note_idx > 0
-                            else f" {(note if self.labeled_frets else ""): <2}"
+                            else f"─{(note if self.labeled_frets else ""):─<2}"
                         ),
                         bg_color=dim_rgb(
                             (self.color_map[note] if self.rgb_frets else white_rgb),
