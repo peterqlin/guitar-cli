@@ -1,3 +1,4 @@
+import re
 from rich.console import Console
 from rich.text import Text
 from .utils import get_fret_spacing, get_rgb_text, dim_rgb, chromatic_scale
@@ -81,7 +82,8 @@ class Fretboard:
 
         styled_fret = get_rgb_text("┼", bg_color=black_rgb)
         fretboard_arr = [
-            styled_fret.join(
+            styled_fret
+            + styled_fret.join(
                 [
                     get_rgb_text(
                         (
@@ -105,7 +107,13 @@ class Fretboard:
             for string_idx, notes in enumerate(self.fretboard)
         ]
 
-        rendered_fretboard = "\n".join(fretboard_arr)
+        replacements = {
+            f"({i})": styled_string for i, styled_string in enumerate(fretboard_arr)
+        }
+        pattern = re.compile("|".join(map(re.escape, replacements.keys())))
+        rendered_fretboard = pattern.sub(
+            lambda m: replacements[m.group(0)], self.headstock
+        )
 
         return Text.from_markup("\n" + rendered_fretboard + "\n")
 
