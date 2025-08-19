@@ -82,7 +82,7 @@ def show(chord, variation):
 
 
 @cli.command()
-@click.option("-n", "--note", type=str, default="e")
+@click.argument("note")
 def find(note):
     global running
     global note_to_find
