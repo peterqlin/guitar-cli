@@ -95,7 +95,7 @@ class Fretboard:
                         f"    {note: <2}   ",
                         bg_color=dim_rgb(
                             self.color_map[note],
-                            1 if self.chord[string_idx] == note_idx else 0.3,
+                            1 if self.chord[string_idx] == note_idx else 0,
                         ),
                     )
                     for note_idx, note in enumerate(notes)
