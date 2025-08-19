@@ -5,13 +5,19 @@ from .utils import get_fret_spacing, get_rgb_text, dim_rgb
 
 class Fretboard:
     def __init__(
-        self, fretboard_length=200, fret_count=12, rgb_frets=True, labeled_frets=True
+        self,
+        display_mode,
+        fretboard_length=200,
+        fret_count=12,
+        rgb_frets=True,
+        labeled_frets=True,
     ) -> None:
         self.console = Console()
         self.rgb_frets = rgb_frets
         self.labeled_frets = labeled_frets
         self.fret_count = fret_count
         self.fret_spacing = get_fret_spacing(fretboard_length, fret_count)
+        self.display_mode = display_mode
         self.color_map = {
             "e": (31, 119, 180),  # Blue
             "f": (255, 127, 14),  # Orange
@@ -28,6 +34,7 @@ class Fretboard:
         }
 
         self.chord = [0] * 6
+        self.find_note = "e"
 
         # TODO: allow toggle between equivalent sharps and flats
         self.chromatic_scale = [
@@ -75,7 +82,7 @@ class Fretboard:
     def toggle_labeled_frets(self) -> None:
         self.labeled_frets = not self.labeled_frets
 
-    def show(self) -> Text:
+    def render(self) -> Text:
         """
         Handle rendering the fretboard
         """
@@ -95,7 +102,12 @@ class Fretboard:
                         ),
                         bg_color=dim_rgb(
                             (self.color_map[note] if self.rgb_frets else white_rgb),
-                            1 if self.chord[string_idx] == note_idx else 0,
+                            (
+                                (1 if note_idx == self.chord[string_idx] else 0)
+                                if self.display_mode
+                                == "chord"  # TODO: add an elif for `find` mode
+                                else (1 if note == self.find_note else 0)
+                            ),
                         ),
                     )
                     for note_idx, note in enumerate(notes)
@@ -109,15 +121,13 @@ class Fretboard:
         return Text.from_markup("\n" + rendered_fretboard + "\n")
 
     def set_chord(self, chord_name: str, variation: int) -> None:
-        try:
-            chord_name = chord_name.strip().lower()
-            if chord_name not in [s.lower() for s in self.valid_chord_names]:
-                raise Exception(f"Chord {chord_name} not found!")
-            # TODO: replace magic number
-            if variation < 1 or variation > 6:
-                raise Exception(
-                    f"Variation {variation} for chord {chord_name} not found!"
-                )
-            self.chord = self.chord_dict[chord_name]
-        except Exception as e:
-            self.console.log(f"An unexpected error occurred: {e}")
+        chord_name = chord_name.strip().lower()
+        if chord_name not in [s.lower() for s in self.valid_chord_names]:
+            raise Exception(f"Chord {chord_name} not found!")
+        # TODO: replace magic number
+        if variation < 1 or variation > 6:
+            raise Exception(f"Variation {variation} for chord {chord_name} not found!")
+        self.chord = self.chord_dict[chord_name]
+
+    def set_find_note(self, find_note) -> None:
+        self.find_note = find_note

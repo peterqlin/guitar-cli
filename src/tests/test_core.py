@@ -4,6 +4,8 @@ from rich.traceback import install
 
 install()
 
+# TODO: actually write unit tests
+
 
 def test_show():
     fbs = [
@@ -13,13 +15,13 @@ def test_show():
         Fretboard(rgb_frets=False, labeled_frets=False),
     ]
     for fb in fbs:
-        fb.show()
+        fb.render()
 
 
 def test_chord():
     f = Fretboard()
     f.set_chord("c", 1)
-    f.show()
+    f.render()
 
 
 if __name__ == "__main__":
