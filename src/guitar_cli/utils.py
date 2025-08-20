@@ -75,6 +75,8 @@ def get_bg_color_from_state(
     state: dict, note: str, note_idx: int, string_idx: int
 ) -> tuple | None:
     if state["display_mode"] == "chord":
-        return color_map[note] if note_idx == state["chord"][string_idx] else None
+        if note_idx == state["chord"][string_idx]:
+            return color_map[note] if state["rgb_frets"] else (240, 240, 240)
+        return None
     if state["display_mode"] == "find":
         return color_map[note] if note == state["find_note"] else None

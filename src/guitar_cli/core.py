@@ -22,14 +22,18 @@ class Fretboard:
         labeled_frets=True,
     ) -> None:
         self.console = Console()
-        self.rgb_frets = rgb_frets
-        self.labeled_frets = labeled_frets
         self.fret_count = fret_count
         self.fret_spacing = get_fret_spacing(fretboard_length, fret_count)
         self.fretboard_window_width = shutil.get_terminal_size().columns
         self.fretboard_window_start = 0
         self.total_fretboard_width = 1000  # TODO: don't hard-code this
-        self.state = {"display_mode": display_mode, "chord": [0] * 6, "find_note": ""}
+        self.state = {
+            "display_mode": display_mode,
+            "chord": [0] * 6,
+            "find_note": "",
+            "rgb_frets": rgb_frets,
+            "labeled_frets": labeled_frets,
+        }
 
         # TODO: allow toggle between equivalent sharps and flats
 
@@ -43,7 +47,9 @@ class Fretboard:
         # create fretboard with inc indices corresponding to lower pitch strings
         self.fretboard = [
             [
-                chromatic_scale[(i + pos) % len(chromatic_scale)]
+                chromatic_scale[
+                    (i + pos + 1) % len(chromatic_scale)
+                ]  # skip open string
                 for i in range(self.fret_count)
             ]
             for pos in init_pos
@@ -57,10 +63,10 @@ class Fretboard:
             self.headstock = ""
 
     def toggle_rgb_frets(self) -> None:
-        self.rgb_frets = not self.rgb_frets
+        self.state["rgb_frets"] = not self.state["rgb_frets"]
 
     def toggle_labeled_frets(self) -> None:
-        self.labeled_frets = not self.labeled_frets
+        self.state["labeled_frets"] = not self.state["labeled_frets"]
 
     def pan_fretboard(self, direction: str, distance: int) -> None:
         if direction == "left":
@@ -75,15 +81,11 @@ class Fretboard:
         """
         Handle rendering the fretboard
         """
-        white_rgb = (240, 240, 240)
-        gray_rgb = (150, 150, 150)
-        black_rgb = (0, 0, 0)
-
         fret = "┼"
         guitar_string = "───"
         fretboard_arr = [
             get_rgb_text(
-                f"{(init_notes[string_idx] if self.labeled_frets else "─")}",
+                f"{(init_notes[string_idx] if self.state["labeled_frets"] else "─")}",
                 bg_color=get_bg_color_from_state(
                     self.state, init_notes[string_idx], 0, string_idx
                 ),
@@ -94,17 +96,30 @@ class Fretboard:
                 [
                     guitar_string
                     + get_rgb_text(
-                        f"─{(note if self.labeled_frets else ""):─<2}",
+                        f"─{(note if self.state["labeled_frets"] else ""):─<2}",
                         bg_color=get_bg_color_from_state(
                             self.state, note, note_idx + 1, string_idx
-                        ),  # add 1 to account for skipping open string
+                        ),  # add 1 because open string is not in notes array
                     )
                     + guitar_string
-                    for note_idx, note in enumerate(notes[1:])
+                    for note_idx, note in enumerate(notes)
                 ]
             )
             for string_idx, notes in enumerate(self.fretboard)
         ]
+        fretboard_arr.append(
+            "   "
+            + " ".join(
+                [
+                    (
+                        "    .    "
+                        if note_idx in [5, 7, 9, 15, 17]
+                        else "    ..   " if note_idx == 12 else "         "
+                    )
+                    for note_idx in range(1, len(self.fretboard[0]))
+                ]
+            )
+        )
 
         replacements = {
             f"({i})": styled_string for i, styled_string in enumerate(fretboard_arr)

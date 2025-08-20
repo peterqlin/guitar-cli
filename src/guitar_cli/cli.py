@@ -79,7 +79,7 @@ def show(chord, variation):
         "Press t to toggle colors off/on. Press y to toggle labeled frets. Press left/right arrow to pan. Press q to quit."
     )
 
-    f = Fretboard("chord")
+    f = Fretboard("chord", fret_count=20)
     f.set_chord(chord, variation=variation)
     f.render()
     with Live(f.render(), refresh_per_second=4) as live:
@@ -109,7 +109,7 @@ def find(note):
     )
 
     state["note_to_find"] = note
-    f = Fretboard("find")
+    f = Fretboard("find", fret_count=20)
     f.set_find_note(state["note_to_find"])
     f.render()
     with Live(f.render(), refresh_per_second=4) as live:
