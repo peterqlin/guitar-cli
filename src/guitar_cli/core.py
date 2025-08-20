@@ -4,11 +4,11 @@ from rich.console import Console
 from rich.text import Text
 from .utils import (
     get_fret_spacing,
-    get_fret_dimness,
     get_rgb_text,
-    get_dim_rgb,
+    get_bg_color_from_state,
     chromatic_scale,
     init_notes,
+    color_map,
 )
 
 
@@ -29,24 +29,10 @@ class Fretboard:
         self.fretboard_window_width = shutil.get_terminal_size().columns
         self.fretboard_window_start = 0
         self.total_fretboard_width = 200  # TODO: don't hard-code this
-        self.display_mode = display_mode
-        self.color_map = {
-            "e": (31, 119, 180),  # Blue
-            "f": (255, 127, 14),  # Orange
-            "f#": (44, 160, 44),  # Green
-            "g": (214, 39, 40),  # Red
-            "g#": (148, 103, 189),  # Purple
-            "a": (140, 86, 75),  # Brown
-            "a#": (227, 119, 194),  # Pink
-            "b": (127, 127, 127),  # Gray
-            "c": (188, 189, 34),  # Olive
-            "c#": (23, 190, 207),  # Teal
-            "d": (255, 152, 150),  # Light Red
-            "d#": (197, 176, 213),  # Lavender
-        }
+        self.state = {"display_mode": display_mode, "chord": [0] * 6, "find_note": ""}
 
-        self.chord = [0] * 6
-        self.find_note = "e"
+        # self.chord = [0] * 6
+        # self.find_note = "e"
 
         # TODO: allow toggle between equivalent sharps and flats
 
@@ -57,8 +43,6 @@ class Fretboard:
         # TODO: maybe change how this is stored, but for now it'll work
         # get initial note positions, high e to low e
         init_pos = [chromatic_scale.index(n) for n in init_notes]
-        # TODO: fix bug where zooming in and out causes visual glitches
-        # TODO: add scrolling when fretboard doesn't fit in terminal
         # create fretboard with inc indices corresponding to lower pitch strings
         self.fretboard = [
             [
@@ -98,45 +82,27 @@ class Fretboard:
         gray_rgb = (150, 150, 150)
         black_rgb = (0, 0, 0)
 
-        styled_fret = get_rgb_text("┼", bg_color=black_rgb)
-        styled_string = get_rgb_text("───", bg_color=black_rgb)
+        fret = "┼"
+        guitar_string = "───"
         fretboard_arr = [
             get_rgb_text(
                 f"{(init_notes[string_idx] if self.labeled_frets else "─")}",
-                bg_color=get_dim_rgb(
-                    (
-                        self.color_map[init_notes[string_idx]]
-                        if self.rgb_frets
-                        else white_rgb
-                    ),
-                    get_fret_dimness(
-                        self.display_mode,
-                        note=init_notes[string_idx],
-                        note_idx=0,
-                        chord_idx=self.chord[string_idx],
-                        find_note=self.find_note,
-                    ),
+                bg_color=get_bg_color_from_state(
+                    self.state, init_notes[string_idx], 0, string_idx
                 ),
             )
-            + styled_fret
-            + styled_fret
-            + styled_fret.join(
+            + fret
+            + fret
+            + fret.join(
                 [
-                    styled_string
+                    guitar_string
                     + get_rgb_text(
                         f"─{(note if self.labeled_frets else ""):─<2}",
-                        bg_color=get_dim_rgb(
-                            (self.color_map[note] if self.rgb_frets else white_rgb),
-                            get_fret_dimness(
-                                self.display_mode,
-                                note=note,
-                                note_idx=note_idx + 1,
-                                chord_idx=self.chord[string_idx],
-                                find_note=self.find_note,
-                            ),
-                        ),
+                        bg_color=get_bg_color_from_state(
+                            self.state, note, note_idx + 1, string_idx
+                        ),  # add 1 to account for skipping open string
                     )
-                    + styled_string
+                    + guitar_string
                     for note_idx, note in enumerate(notes[1:])
                 ]
             )
@@ -170,7 +136,7 @@ class Fretboard:
         # TODO: replace magic number
         if variation < 1 or variation > 6:
             raise Exception(f"Variation {variation} for chord {chord_name} not found!")
-        self.chord = self.chord_dict[chord_name]
+        self.state["chord"] = self.chord_dict[chord_name]
 
     def set_find_note(self, find_note) -> None:
-        self.find_note = find_note
+        self.state["find_note"] = find_note
