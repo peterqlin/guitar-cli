@@ -5,6 +5,8 @@ CLI for visualizing guitar chords, finding notes, and more
 
 <img src="assets/demo_8_19_25.png" alt="Demo" width="60%" />
 
+<img src="assets/ubuntu_demo_8_19_25.png" alt="Demo on Ubuntu" width="60%" />
+
 ## running this locally
 - `uv venv`
 - `.venv/Scripts/activate`
