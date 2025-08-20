@@ -28,11 +28,8 @@ class Fretboard:
         self.fret_spacing = get_fret_spacing(fretboard_length, fret_count)
         self.fretboard_window_width = shutil.get_terminal_size().columns
         self.fretboard_window_start = 0
-        self.total_fretboard_width = 200  # TODO: don't hard-code this
+        self.total_fretboard_width = 1000  # TODO: don't hard-code this
         self.state = {"display_mode": display_mode, "chord": [0] * 6, "find_note": ""}
-
-        # self.chord = [0] * 6
-        # self.find_note = "e"
 
         # TODO: allow toggle between equivalent sharps and flats
 
