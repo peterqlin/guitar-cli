@@ -85,7 +85,7 @@ class Fretboard:
         guitar_string = "───"
         fretboard_arr = [
             get_rgb_text(
-                f"{(init_notes[string_idx] if self.state["labeled_frets"] else "─")}",
+                f'{(init_notes[string_idx] if self.state["labeled_frets"] else "─")}',
                 bg_color=get_bg_color_from_state(
                     self.state, init_notes[string_idx], 0, string_idx
                 ),
@@ -96,7 +96,7 @@ class Fretboard:
                 [
                     guitar_string
                     + get_rgb_text(
-                        f"─{(note if self.state["labeled_frets"] else ""):─<2}",
+                        f'─{(note if self.state["labeled_frets"] else ""):─<2}',
                         bg_color=get_bg_color_from_state(
                             self.state, note, note_idx + 1, string_idx
                         ),  # add 1 because open string is not in notes array
